@@ -1,12 +1,21 @@
-def register_hooks(model):
-    def hook_fn(module, input, output):
-        print(f"Layer: {module}")
-        print(f"Input: {input}")
-        print(f"Output: {output}")
-        if hasattr(module, 'weight'):
-            print(f"Weight: {module.weight}")
-        if hasattr(module, 'bias'):
-            print(f"Bias: {module.bias}")
+import torch
 
+def forward_hook(module, input, output):
+    print(f"Layer: {module.__class__.__name__}")
+    print(f"Input: {input}")
+    print(f"Output: {output}")
+    if hasattr(module, 'weight'):
+        print(f"Weight: {module.weight.data}")
+    if hasattr(module, 'bias') and module.bias is not None:
+        print(f"Bias: {module.bias.data}")
+
+def register_hooks(model):
+    hooks = []
     for layer in model.children():
-        layer.register_forward_hook(hook_fn)
+        hook = layer.register_forward_hook(forward_hook)
+        hooks.append(hook)
+    return hooks
+
+def remove_hooks(hooks):
+    for hook in hooks:
+        hook.remove()

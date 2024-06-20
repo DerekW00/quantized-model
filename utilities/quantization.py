@@ -5,6 +5,8 @@ from config import QUANT_ENGINE
 def prepare_model_for_quantization(model):
     torch.backends.quantized.engine = QUANT_ENGINE
     model.qconfig = quant.get_default_qconfig(QUANT_ENGINE)
+    if hasattr(model, 'fuse_model'):
+        model.fuse_model()
     quant.prepare(model, inplace=True)
     return model
 
@@ -17,5 +19,5 @@ def calibrate_model(model, calibration_data):
 
 def convert_model_to_quantized(model):
     torch.backends.quantized.engine = QUANT_ENGINE
-    quantized_model = quant.convert(model, inplace=False)  # Ensure inplace=False for clarity
+    quantized_model = quant.convert(model, inplace=False)
     return quantized_model
