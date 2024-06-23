@@ -1,4 +1,4 @@
-# train_alexnet.py
+# train_and_test_alexnet.py
 
 import torch
 import torch.nn as nn
@@ -14,6 +14,7 @@ num_epochs = 10
 learning_rate = 1e-3
 batch_size = 32
 num_classes = 10
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # Load dataset
 transform = transforms.Compose([
@@ -29,7 +30,7 @@ train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
 # Initialize model
-model = AlexNet(num_classes=num_classes).to('cuda')
+model = AlexNet(num_classes=num_classes).to(device)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
@@ -37,7 +38,7 @@ optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 for epoch in range(num_epochs):
     model.train()
     for images, labels in train_loader:
-        images, labels = images.to('cuda'), labels.to('cuda')
+        images, labels = images.to(device), labels.to(device)
         outputs = model(images)
         loss = criterion(outputs, labels)
         optimizer.zero_grad()
@@ -52,13 +53,13 @@ calibrated_model = calibrate_model(prepared_model, train_loader)
 quantized_model = convert_model_to_quantized(calibrated_model)
 
 # Evaluation
-quantized_model.to('cuda')
+quantized_model.to(device)
 quantized_model.eval()
 correct = 0
 total = 0
 with torch.no_grad():
     for images, labels in test_loader:
-        images, labels = images.to('cuda'), labels.to('cuda')
+        images, labels = images.to(device), labels.to(device)
         outputs = quantized_model(images)
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
