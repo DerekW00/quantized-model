@@ -29,13 +29,13 @@ class AlexNet(nn.Module):
             nn.ReLU(inplace=True),
             nn.Linear(4096, num_classes),
         )
-        self.quant = quantization.QuantStub()
-        self.dequant = quantization.DeQuantStub()
+        #self.quant = quantization.QuantStub()
+        #self.dequant = quantization.DeQuantStub()
 
     def forward(self, x):
-        x = self.quant(x)
+        #x = self.quant(x)
         x = self.features(x)
         x = torch.flatten(x, 1)
         x = self.classifier(x)
-        x = self.dequant(x)
+        #x = self.dequant(x)
         return x

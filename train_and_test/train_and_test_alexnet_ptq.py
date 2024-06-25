@@ -1,4 +1,4 @@
-# train_and_test_alexnet.py
+# train_and_test_alexnet_ptq.py
 
 import torch
 import torch.nn as nn

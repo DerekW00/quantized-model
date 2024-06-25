@@ -9,11 +9,11 @@ class ResNet18(nn.Module):
         if layer is None:
             layer = [2, 2, 2, 2]
         self.model = ResNet(BasicBlock, layers = layer, num_classes=num_classes)
-        self.quant = quantization.QuantStub()
-        self.dequant = quantization.DeQuantStub()
+        #self.quant = quantization.QuantStub()
+        #self.dequant = quantization.DeQuantStub()
 
     def forward(self, x):
-        x = self.quant(x)
+        #x = self.quant(x)
         x = self.model(x)
-        x = self.dequant(x)
+        #x = self.dequant(x)
         return x
